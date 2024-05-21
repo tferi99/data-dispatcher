@@ -1,7 +1,7 @@
 import * as winston from 'winston';
 import safeStringify from 'fast-safe-stringify';
 import * as moment from 'moment';
-import { StringUtils } from '@app/client-lib/util/StringUtils';
+import { StringUtils } from '../core/util/string-utils';
 
 //console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! logging-formats.ts !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! - winston.format: ' + winston.format);
 
