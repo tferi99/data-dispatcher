@@ -7,7 +7,9 @@ import { AppModule } from './app.module';
 import { WinstonModule } from 'nest-winston';
 import { LoggingConfig } from './config/logging.config';
 import { DevUtils } from './core/util/dev-utils';
+import { EnvUtils } from './core/util/env-utils';
 
+const PORT = EnvUtils.getNumberValue('SERVER_PORT');
 /**
  *  Documentation: https://github.com/winstonjs/winston
  *
@@ -29,6 +31,6 @@ process.on('unhandledRejection', (err: Error) => {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(PORT);
 }
 bootstrap();

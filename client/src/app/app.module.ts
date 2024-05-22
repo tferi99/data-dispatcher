@@ -8,6 +8,8 @@ import { SendComponent } from './send/send.component';
 import { ReceiveComponent } from './receive/receive.component';
 import { WEBSOCKET_CONFIG } from './receive/connection/websocket.config';
 import { SocketIoModule } from 'ngx-socket-io';
+import { LoggerModule } from 'ngx-logger';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,12 @@ import { SocketIoModule } from 'ngx-socket-io';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    LoggerModule.forRoot({
+      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
+      level: environment.logLevel,
+      serverLogLevel: environment.serverLogLevel,
+      disableConsoleLogging: false,
+    }),
     SocketIoModule.forRoot(WEBSOCKET_CONFIG),
   ],
   providers: [],

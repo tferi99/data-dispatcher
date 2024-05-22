@@ -1,13 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject, Logger, LoggerService } from '@nestjs/common';
-import { CustomHttpStatus, ResponseErrorPayload, ServerError } from '@app/client-lib';
-import { ForeignKeyConstraintViolationException, UniqueConstraintViolationException } from '@mikro-orm/core';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces/features/arguments-host.interface';
-import { AccountTestFailedException, UserDisabledException } from '../exception/application-exceptions';
 import { EnvUtils } from '../util/env-utils';
-
-import { TraderAccessDeniedException, TraderNotFoundException } from '../../feature-modules/trader/trader-exceptions';
-import { NotSupported } from 'ccxt';
-import { ConfigException } from '@app/client-lib/util/config-utils';
+import { CustomHttpStatus, ResponseErrorPayload, ServerError } from '../common.model';
 
 export type HttpStatusExt = HttpStatus | CustomHttpStatus;
 
@@ -45,7 +39,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (maxLen) {
       fromStack = fromStack.split('\n').join('');
       if (fromStack && fromStack.length > maxLen) {
-        fromStack = fromStack.substr(0, maxLen) + '...';
+        fromStack = fromStack.substring(0, maxLen) + '...';
       }
     }
     this.logger.error(err.constructor.name + '|' + fromStack);
@@ -70,24 +64,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
    */
   createCustomResponseErrorPayload(exception: any, ctx: HttpArgumentsHost, status: HttpStatusExt): ResponseErrorPayload {
     const request = ctx.getRequest();
-    let appErr: ServerError = ServerError.Unknown;
-    if (exception && exception instanceof UniqueConstraintViolationException) {
-      appErr = ServerError.DdUniqueConstraintError;
-    } else if (exception && exception instanceof ForeignKeyConstraintViolationException) {
-      appErr = ServerError.DbForeignKeyConstraintViolationError;
-    } else if (exception && exception instanceof UserDisabledException) {
-      appErr = ServerError.UserDisabled;
-    } else if (exception && exception instanceof AccountTestFailedException) {
-      appErr = ServerError.AccountTestFailed;
-    } else if (exception && exception instanceof NotSupported) {
-      appErr = ServerError.CcxtNotSupported;
-    } else if (exception && exception instanceof TraderNotFoundException) {
-      appErr = ServerError.TraderNotFound;
-    } else if (exception && exception instanceof TraderAccessDeniedException) {
-      appErr = ServerError.TraderAccessDenied;
-    } else if (exception && exception instanceof ConfigException) {
-      appErr = ServerError.ConfigException;
-    }
+    const appErr: ServerError = ServerError.Unknown;
 
     if (appErr != ServerError.Unknown) {
       status = CustomHttpStatus.ApplicationError;

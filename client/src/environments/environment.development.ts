@@ -1,4 +1,10 @@
+import { NgxLoggerLevel } from 'ngx-logger';
+
 export const environment = {
   production: false,
-  wsUrl: 'http://localhost:3020',
+
+  logLevel: NgxLoggerLevel.TRACE,
+  serverLogLevel: NgxLoggerLevel.OFF,
+
+  wsUrl: 'http://localhost:10000',
 };

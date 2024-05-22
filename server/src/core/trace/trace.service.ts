@@ -1,10 +1,9 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { Trace } from '@app/client-lib/model/trace.model';
-import { AppConfigService } from '../config/app-config/app-config.service';
-import { AppConfigId, EnumUtils } from '@app/client-lib';
-import { MikroORM, UseRequestContext } from '@mikro-orm/core';
+import { Injectable, Logger } from '@nestjs/common';
 import { EnvUtils } from '../util/env-utils';
-import { INIT_LOG_PREFIX } from '../../init/init.service';
+import { Trace } from './trace.model';
+import { AppConfigService } from '../config/app-config/app-config.service';
+import { AppConfigId } from '../config/config.model';
+import { EnumUtils } from '../util/enum-utils';
 
 /**
  * It puts trace messages into log if trace enabled for the feature.
@@ -28,26 +27,11 @@ export class TraceService {
    */
   private traceDisabled = false;
 
-  constructor(
-  ) {
+  constructor(private appConfigService: AppConfigService) {
     this.traceDisabled = EnvUtils.getBooleanValue('TRACE_DISABLED');
     if (this.traceDisabled) {
       this.logger.debug('!!!!!!!!!!!!!!!!!!!!!!!!! Tracing disabled !!!!!!!!!!!!!!!!!!!!!!!!!');
     }
-  }
-
-  /**
-   * This initialization only activates this crud by switching 'enabled' to true,
-   * to trigger that dependencies are already initialized.
-   */
-  @UseRequestContext()
-  async init() {
-    this.logger.log(INIT_LOG_PREFIX + 'TraceService initializing...');
-
-    this.inited = true;
-    this.dumpTraceSettings();
-
-    this.logger.log(INIT_LOG_PREFIX + 'TraceService initialized');
   }
 
   isTraceEnabled(trace: Trace) {
@@ -69,9 +53,6 @@ export class TraceService {
   }
 
   verbose(logger: Logger, feature: Trace, msg: string, data?: any) {
-    if (!this.matchingFilter(msg)) {
-      return;
-    }
     logger.verbose(this.getMessage(feature, msg, data));
     this.logData(logger, feature, data);
   }
@@ -117,7 +98,7 @@ export class TraceService {
     if (data === undefined || data === null) {
       return '';
     }
-    const type = typeof data;
+    //const type = typeof data;
     if (typeof data === 'object' || Array.isArray(data)) {
       return JSON.stringify(data, null, 2);
     }
@@ -133,22 +114,5 @@ export class TraceService {
       return;
     }
     logger.debug(this.getLogPrefix(feature) + 'DATA: ' + this.data2string(data));
-  }
-
-  private matchingFilter(msg: string): boolean {
-    const filter = this.appConfigService.getString(AppConfigId.FilterForTracing);
-    const filterIsRegex = this.appConfigService.getBoolean(AppConfigId.FilterForTracingIsRegex);
-    try {
-      if (filter === undefined || filter.trim() === '') {
-        return true;
-      }
-      if (filterIsRegex) {
-        return msg.match(filter).length > 0;
-      }
-      return msg.includes(filter);
-    } catch (err) {
-      console.log(`!!!!!!!!!!!!!!! ERROR in matchingFilter(${msg}), filter:`, filter);
-      return false;
-    }
   }
 }

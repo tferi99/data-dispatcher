@@ -1,3 +1,6 @@
+/**
+ * Copy from server
+ */
 export enum WsEvent {
   Connected = 'connected',
   Error = 'error',

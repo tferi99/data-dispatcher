@@ -1,13 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { NGXLogger } from 'ngx-logger';
-import { WsErrorAction } from '../store/app.actions';
-import { AuthReason, Feature, WsEvent } from '@app/client-lib';
-import { AuthService } from '../auth/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { AuthorizedAction } from '../auth/store/auth.actions';
-import { ConnectedAction, ConnectErrorAction, DisconnectedAction } from './store/connection.actions';
+import { WsEvent } from '../event.model';
 
 export enum SocketIoReason {
   ConnectError = 'connect_error',
@@ -25,16 +20,13 @@ export class WebSocketService {
   exceptionSub?: Subscription;
 
   connected$!: Observable<any>;
-  authorized$!: Observable<any>;
   pong$!: Observable<any>;
   exception$!: Observable<any>;
 
   private _socketId?: string;
-  private _authService!: AuthService;
 
   constructor(
     private socket: Socket,
-    private store: Store,
     private logger: NGXLogger,
   ) {
     this.init();
@@ -45,7 +37,6 @@ export class WebSocketService {
     this.cleanup();
 
     this.connected$ = this.socket.fromEvent<any>(WsEvent.Connected);
-    this.authorized$ = this.socket.fromEvent<any>(WsEvent.Authorized);
     this.pong$ = this.socket.fromEvent<any>(WsEvent.Pong);
     this.exception$ = this.socket.fromEvent<any>(WsEvent.Exception);
 
@@ -53,11 +44,6 @@ export class WebSocketService {
     this.connected$.subscribe({
       next: (socketId: string) => {
         this.handleConnected(socketId);
-      },
-    });
-    this.authorized$.subscribe({
-      next: (reason: AuthReason) => {
-        this.handleAuthorized(reason);
       },
     });
     this.pong$.subscribe({
@@ -111,24 +97,6 @@ export class WebSocketService {
     this.sendData(WsEvent.Ping, msg);
   }
 
-  pingWithAuth(msg: string): void {
-    console.log('WebSocket PingWithAuth sent: ' + msg);
-    this.sendData(WsEvent.PingWithAuth, msg);
-  }
-
-  pingAdminOnly(msg: string): void {
-    console.log('WebSocket PingAdminOnly sent: ' + msg);
-    this.sendData(WsEvent.PingAdminOnly, msg);
-  }
-
-  addFeature(feature: Feature): void {
-    this.sendData(WsEvent.AddFeature, feature);
-  }
-
-  removeFeature(feature: Feature): void {
-    this.sendData(WsEvent.RemoveFeature, feature);
-  }
-
   generateWsError(data: string): void {
     this.sendData(WsEvent.GenerateWsError, 'data');
   }
@@ -149,30 +117,13 @@ export class WebSocketService {
   private handleConnected(socketId: string) {
     this.logger.debug(`WebSocket Client[${socketId}] connected.`);
     this._socketId = socketId;
-    this.store.dispatch(ConnectedAction({ socketId }));
   }
 
   private handleErrors(reason: string, err: any) {
     console.log(`SOCKET-IO ERROR[${reason}]:`, err);
-
-    if (reason === SocketIoReason.Disconnect) {
-      this.store.dispatch(DisconnectedAction());
-    } else if (reason === SocketIoReason.ConnectError) {
-      this.store.dispatch(ConnectErrorAction());
-    }
   }
-
-  private handleAuthorized(reason: AuthReason) {
-    this.store.dispatch(AuthorizedAction({ reason }));
-  }
-
-  /*  private handleCounter(counter-value: number) {
-    console.log('WebSocket COUNTER received:', counter-value);
-    this.store.dispatch(SetServerCounterAction({value: counter-value}));
-  }*/
 
   private handleException(payload: any) {
     this.logger.error('EXCEPTION FROM WS: ', payload);
-    this.store.dispatch(WsErrorAction({ payload }));
   }
 }
