@@ -4,6 +4,7 @@ import { Trace } from './trace.model';
 import { AppConfigService } from '../config/app-config/app-config.service';
 import { AppConfigId } from '../config/config.model';
 import { EnumUtils } from '../util/enum-utils';
+import { INIT_LOG_PREFIX } from '../init.model';
 
 /**
  * It puts trace messages into log if trace enabled for the feature.
@@ -32,6 +33,14 @@ export class TraceService {
     if (this.traceDisabled) {
       this.logger.debug('!!!!!!!!!!!!!!!!!!!!!!!!! Tracing disabled !!!!!!!!!!!!!!!!!!!!!!!!!');
     }
+  }
+
+  async init() {
+    this.logger.log(INIT_LOG_PREFIX + 'TraceService initializing...');
+
+    this.inited = true;
+
+    this.logger.log(INIT_LOG_PREFIX + 'TraceService initialized');
   }
 
   isTraceEnabled(trace: Trace) {

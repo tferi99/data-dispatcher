@@ -5,9 +5,12 @@ import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './core/filter/global-exception.filter';
 import { EnvUtils } from './core/util/env-utils';
 import { INIT_LOG_PREFIX } from './core/init.model';
+import { SandboxModule } from './sandbox/sandbox.module';
+import { AdminModule } from './admin/admin.module';
+import { InitModule } from './init/init.module';
 
 @Module({
-  imports: [WebhookModule, BroadcastModule],
+  imports: [WebhookModule, BroadcastModule, SandboxModule, AdminModule, InitModule],
   controllers: [],
   providers: [
     Logger, // for default logger

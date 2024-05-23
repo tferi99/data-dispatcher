@@ -12,6 +12,7 @@ export enum Trace {
   WebSocket = 'TRACE_WEB_SOCKET',
   Events = 'TRACE_EVENTS',
   Broadcast = 'TRACE_BROADCAST',
+  Sandbox = 'TRACE_SANDBOX',
 }
 
 export const TAG_TRACE_PREFIX = 'Trace;';

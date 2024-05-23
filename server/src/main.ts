@@ -8,6 +8,7 @@ import { WinstonModule } from 'nest-winston';
 import { LoggingConfig } from './config/logging.config';
 import { DevUtils } from './core/util/dev-utils';
 import { EnvUtils } from './core/util/env-utils';
+import { InitService } from './init/init.service';
 
 const PORT = EnvUtils.getNumberValue('SERVER_PORT');
 /**
@@ -30,7 +31,22 @@ process.on('unhandledRejection', (err: Error) => {
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(LoggingConfig.MAIN),
+    // logger: console,
+    //logger: false,
+  });
+
+  // swagger
+  /*  const options = new DocumentBuilder().setTitle('Cats example').setDescription('The cats API description').setVersion('1.0').addTag('cats').build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('api', app, document);*/
+
+  //  app.useGlobalInterceptors(new ErrorsInterceptor());
+
+  const initService = app.get(InitService);
+  await initService.initApplication();
+
   await app.listen(PORT);
 }
 bootstrap();
