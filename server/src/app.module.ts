@@ -8,10 +8,12 @@ import { INIT_LOG_PREFIX } from './core/init.model';
 import { SandboxModule } from './sandbox/sandbox.module';
 import { AdminModule } from './admin/admin.module';
 import { InitModule } from './init/init.module';
+import { AppController } from './app.controller';
 
 @Module({
-  imports: [WebhookModule, BroadcastModule, SandboxModule, AdminModule, InitModule],
-  controllers: [],
+  imports: [
+    WebhookModule, BroadcastModule, SandboxModule, AdminModule, InitModule],
+  controllers: [AppController],
   providers: [
     Logger, // for default logger
 
