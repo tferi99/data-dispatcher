@@ -1,3 +1,13 @@
 <div class="container mt-2">
-
+  <div class="row g-2">
+    <div class="col-2">
+      Entries: {{receivedCount}}
+    </div>
+    <div class="col-12">
+      <textarea class="form-control" [value]="receivedAsLines" id="exampleFormControlTextarea1" rows="20"></textarea>
+    </div>
+  </div>
+  <div class="col-2">
+    <button class="btn btn-outline-info mt-2" (click)="onAdd()">Add</button>
+  </div>
 </div>

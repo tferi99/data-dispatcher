@@ -1,11 +1,19 @@
 <div class="container mt-2">
   <div class="row g-2">
     <div class="col-6">
+      <input type="text" [(ngModel)]="message">
+    </div>
+    <div class="col-6">
+      <button class="btn btn-primary ms-2" (click)="onPing()">Ping</button>
+    </div>
+
+    <div class="col-6">
       Data 1
     </div>
     <div class="col-6">
       <button class="btn btn-primary" (click)="send1()">Send</button>
     </div>
+
     <div class="col-6">
       Data 1
     </div>

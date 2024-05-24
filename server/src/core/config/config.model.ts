@@ -46,12 +46,14 @@ export type AppConfig = ConfigVariable<AppConfigId>;
 export enum AppConfigId {
   // Trace enabled
   TraceAppConfig = 'TRACE_APP_CONFIG',
+  TraceClientConnections = 'TRACE_CLIENT_CONNECTIONS',
   TraceWebSocket = 'TRACE_WEB_SOCKET',
   TraceBroadcast = 'TRACE_BROADCAST',
   TraceSandbox = 'TRACE_SANDBOX',
 
   // Trace data enabled
   TraceAppConfigData = 'TRACE_APP_CONFIG_DATA',
+  TraceClientConnectionsData = 'TRACE_CLIENT_CONNECTIONS_DATA',
   TraceWebSocketData = 'TRACE_WEB_SOCKET_DATA',
   TraceBroadcastData = 'TRACE_BROADCAST_DATA',
   TraceSandboxData = 'TRACE_SANDBOX_DATA',
@@ -65,11 +67,13 @@ export enum AppConfigId {
 export const APP_CONFIG_VARIABLES: AppConfigInfo[] = [
   // Trace
   { configId: AppConfigId.TraceAppConfig, type: ConfigType.Boolean, tag: TAG_TRACE_PREFIX + 'Config' },
+  { configId: AppConfigId.TraceClientConnections, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceWebSocket, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceBroadcast, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceSandbox, type: ConfigType.Boolean },
   // Data for trace
   { configId: AppConfigId.TraceAppConfigData, type: ConfigType.Boolean },
+  { configId: AppConfigId.TraceClientConnectionsData, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceWebSocketData, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceBroadcastData, type: ConfigType.Boolean },
   { configId: AppConfigId.TraceSandboxData, type: ConfigType.Boolean },

@@ -10,6 +10,7 @@ import { WEBSOCKET_CONFIG } from './receive/connection/websocket.config';
 import { SocketIoModule } from 'ngx-socket-io';
 import { LoggerModule } from 'ngx-logger';
 import { environment } from '../environments/environment';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { environment } from '../environments/environment';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
     LoggerModule.forRoot({
       colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
       level: environment.logLevel,

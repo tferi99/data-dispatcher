@@ -7,6 +7,7 @@ import { INIT_LOG_PREFIX } from '../core/init.model';
 import { TraceService } from '../core/trace/trace.service';
 import { AppConfigService } from '../core/config/app-config/app-config.service';
 import { Trace } from '../core/trace/trace.model';
+import { ClientConnectionService } from './client-connection/client-connection.service';
 
 @WebSocketGateway({
   cors: true,
@@ -22,6 +23,7 @@ export class BroadcastGateway implements OnGatewayInit, OnGatewayConnection, OnG
   constructor(
     @Inject(forwardRef(() => TraceService)) private traceService: TraceService,
     @Inject(forwardRef(() => AppConfigService)) private appConfigService: AppConfigService,
+    @Inject(forwardRef(() => ClientConnectionService)) private clientConnectionService: ClientConnectionService,
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,6 +46,12 @@ export class BroadcastGateway implements OnGatewayInit, OnGatewayConnection, OnG
         this.traceService.verbose(this.logger, Trace.WebSocket, 'HEADER[host]: ' + socket.request.headers['host']);
         this.traceService.verbose(this.logger, Trace.WebSocket, 'HEADER[user-agent]: ' + socket.request.headers['user-agent']);
       }
+      const clientIp: string = socket.handshake.address;
+      const someHeaders: { [key: string]: string | undefined } = {
+        host: socket.request.headers['host'],
+        userAgent: socket.request.headers['user-agent'],
+      };
+      this.clientConnectionService.add(socket.id, clientIp, someHeaders);
     } catch (err: any) {
       const msg = `Error occured in handleConnection(client[${socket.id}])`;
       this.logger.error(msg, err);
@@ -61,6 +69,7 @@ export class BroadcastGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (this.traceService.isTraceEnabled(Trace.WebSocket)) {
       this.traceService.verbose(this.logger, Trace.WebSocket, `WS client[${socket.id}] disconnected`);
     }
+    this.clientConnectionService.remove(socket.id);
   }
 
   @SubscribeMessage(WsEvent.Ping)

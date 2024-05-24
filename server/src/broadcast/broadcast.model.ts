@@ -7,5 +7,5 @@ export enum WsEvent {
   Exception = 'exception', // sent when WsException thrown
   GenerateWsError = 'generate_ws_error',
   GenerateError = 'generate_error',
+  General = 'general',
 }
-

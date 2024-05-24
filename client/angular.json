@@ -74,7 +74,8 @@
               "browserTarget": "data-dispatcher-test-client:build:production"
             },
             "development": {
-              "browserTarget": "data-dispatcher-test-client:build:development"
+              "browserTarget": "data-dispatcher-test-client:build:development",
+              "port": 4204
             }
           },
           "defaultConfiguration": "development"
